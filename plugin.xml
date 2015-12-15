@@ -80,17 +80,8 @@
                 <action android:name="org.openudid.GETUDID" />
             </intent-filter>
         </service>
-        <receiver
-            android:name="ly.count.android.sdk.messaging.CountlyMessaging"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="ly.count.android.api" />
-            </intent-filter>
-        </receiver>
-        <service android:name="ly.count.android.sdk.messaging.CountlyMessagingService" >
-            <meta-data android:name="broadcast_action" android:value="ly.count.android.api.broadcast" />
-        </service>
+       
+       
 
     </config-file>
 
