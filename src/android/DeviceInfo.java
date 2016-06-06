@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package ly.count.android.api;
+package ly.count.android.sdk;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -177,6 +177,29 @@ class DeviceInfo {
     }
 
     /**
+     * Returns the package name of the app that installed this app
+     */
+    static String getStore(final Context context) {
+        String result = "";
+        if(android.os.Build.VERSION.SDK_INT >= 3 ) {
+            try {
+                result = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+            } catch (Exception e) {
+                if (Countly.sharedInstance().isLoggingEnabled()) {
+                    Log.i(Countly.TAG, "Can't get Installer package");
+                }
+            }
+            if (result == null || result.length() == 0) {
+                result = "";
+                if (Countly.sharedInstance().isLoggingEnabled()) {
+                    Log.i(Countly.TAG, "No store found");
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Returns a URL-encoded JSON string containing the device metrics
      * to be associated with a begin session event.
      * See the following link for more info:
@@ -193,7 +216,8 @@ class DeviceInfo {
                 "_resolution", getResolution(context),
                 "_density", getDensity(context),
                 "_locale", getLocale(),
-                "_app_version", getAppVersion(context));
+                "_app_version", getAppVersion(context),
+                "_store", getStore(context));
 
         String result = json.toString();
 

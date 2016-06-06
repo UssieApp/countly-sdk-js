@@ -44,14 +44,16 @@
     <source-file src="src/ios/sdk/CountlyDB.m" compiler-flags="-fno-objc-arc" />
     <header-file src="src/ios/sdk/Countly_OpenUDID.h"/>
     <source-file src="src/ios/sdk/Countly_OpenUDID.m" compiler-flags="-fno-objc-arc" />
-    
+    <source-file src="src/ios/sdk/Countly.xcdatamodeld" custom="true"/>
+
     <header-file src="src/ios/CountlyCordova.h"/>
     <source-file src="src/ios/CountlyCordova.m"/>
 
-    <framework src="src/ios/sdk/Countly.xcdatamodeld"/>
+    <!-- <framework src="src/ios/sdk/Countly.xcdatamodeld"/> -->
 
     <framework src="CoreTelephony.framework" weak="true" />
     <framework src="CoreData.framework" weak="true" />
+    <framework src="OpenGLES.framework" weak="true" />
   </platform>
 
   <!-- android -->
@@ -59,7 +61,7 @@
 
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="CountlyCordova">
-        <param name="android-package" value="ly.count.android.api.CountlyCordova" />
+        <param name="android-package" value="ly.count.android.sdk.CountlyCordova" />
       </feature>
     </config-file>
 
@@ -69,33 +71,60 @@
         <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
         <uses-permission android:name="android.permission.WAKE_LOCK"/>
     </config-file>
-    
+
 
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
 
-        <service android:name="org.OpenUDID.OpenUDID_service">
+        <service android:name="org.openudid.OpenUDID_service">
             <intent-filter>
-                <action android:name="org.OpenUDID.GETUDID" />
+                <action android:name="org.openudid.GETUDID" />
             </intent-filter>
         </service>
+        <receiver
+            android:name="ly.count.android.sdk.messaging.CountlyMessaging"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="ly.count.android.api" />
+            </intent-filter>
+        </receiver>
+        <service android:name="ly.count.android.sdk.messaging.CountlyMessagingService" >
+            <meta-data android:name="broadcast_action" android:value="ly.count.android.api.broadcast" />
+        </service>
+
     </config-file>
-    
-    <source-file src="src/android/CountlyCordova.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/Countly.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/AdvertisingIdAdapter.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/ConnectionProcessor.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/ConnectionQueue.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/CountlyStore.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/DeviceId.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/DeviceInfo.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/Event.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/EventQueue.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/OpenUDIDAdapter.java" target-dir="src/ly/count/android/api"/>
-    <source-file src="src/android/UserData.java" target-dir="src/ly/count/android/api"/>
 
+    <source-file src="src/android/CountlyCordova.java" target-dir="src/ly/count/android/sdk"/>
 
-    <source-file src="src/android/OpenUDID_manager.java" target-dir="src/org/OpenUDID/"/>
-    <source-file src="src/android/OpenUDID_service.java" target-dir="src/org/OpenUDID/"/>
+    <source-file src="src/android/AdvertisingIdAdapter.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/CertificateTrustManager.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/ConnectionProcessor.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/ConnectionQueue.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/Countly.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/CountlyStore.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/CrashDetails.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/DeviceId.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/DeviceInfo.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/Event.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/EventQueue.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/MessagingAdapter.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/OpenUDIDAdapter.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/ReferrerReceiver.java" target-dir="src/ly/count/android/sdk"/>
+    <source-file src="src/android/UserData.java" target-dir="src/ly/count/android/sdk"/>
+
+    <source-file src="src/android/messaging/CountlyMessaging.java" target-dir="src/ly/count/android/sdk/messaging"/>
+    <source-file src="src/android/messaging/CountlyMessagingService.java" target-dir="src/ly/count/android/sdk/messaging"/>
+    <source-file src="src/android/messaging/Message.java" target-dir="src/ly/count/android/sdk/messaging"/>
+    <source-file src="src/android/messaging/ProxyActivity.java" target-dir="src/ly/count/android/sdk/messaging"/>
+
+    <source-file src="src/android/OpenUDID_manager.java" target-dir="src/org/openudid/"/>
+    <source-file src="src/android/OpenUDID_service.java" target-dir="src/org/openudid/"/>
+
+    <source-file src="src/android/libs/gcm.jar" target-dir="libs/" />
+    <source-file src="src/android/libs/android-support-v13.jar" target-dir="libs/" />
+    <source-file src="src/android/libs/google-play-services.jar" target-dir="libs/" />
+    <source-file src="src/android/libs/play-services-gcm.jar" target-dir="libs/" />
+
   </platform>
 
   <!-- wp8 -->

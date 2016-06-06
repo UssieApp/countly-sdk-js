@@ -132,8 +132,13 @@
     NSString* token = [command.arguments objectAtIndex:0];
     NSString* messagingMode = [command.arguments objectAtIndex:1];
     int mode = [messagingMode intValue];
+    NSData *tokenByte = [token dataUsingEncoding:NSUTF8StringEncoding];
+    if(mode == 1){
+      // [[CountlyConnectionQueue sharedInstance] setStartedWithTest:YES];
+    }
+    [Countly.sharedInstance didRegisterForRemoteNotificationsWithDeviceToken:tokenByte];
     
-    [[Countly sharedInstance] onRegistrationId:token withMode:mode];
+    // [[CountlyConnectionQueue sharedInstance] tokenSession:token];
     
     CDVPluginResult* pluginResult = nil;
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"onregistrationid!"];

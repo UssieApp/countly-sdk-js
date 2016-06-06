@@ -19,18 +19,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package ly.count.android.api;
+package ly.count.android.sdk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
- * This class provides a persistence layer for the local event & connection queues.
+ * This class provides a persistence layer for the local event &amp; connection queues.
  *
  * The "read" methods in this class are not synchronized, because the underlying data store
  * provides thread-safe reads.  The "write" methods in this class are synchronized, because
@@ -44,9 +50,10 @@ import java.util.*;
  */
 public class CountlyStore {
     private static final String PREFERENCES = "COUNTLY_STORE";
-    private static final String DELIMITER = "===";
+    private static final String DELIMITER = ":::";
     private static final String CONNECTIONS_PREFERENCE = "CONNECTIONS";
     private static final String EVENTS_PREFERENCE = "EVENTS";
+    private static final String LOCATION_PREFERENCE = "LOCATION";
 
     private final SharedPreferences preferences_;
 
@@ -146,6 +153,24 @@ public class CountlyStore {
         final List<Event> events = eventsList();
         events.add(event);
         preferences_.edit().putString(EVENTS_PREFERENCE, joinEvents(events, DELIMITER)).commit();
+    }
+
+    /**
+     * Sets location of user and sends it with next request
+     */
+    void setLocation(final double lat, final double lon) {
+        preferences_.edit().putString(LOCATION_PREFERENCE, lat + "," + lon).commit();
+    }
+
+    /**
+     * Get location or empty string in case if no location is specified
+     */
+    String getAndRemoveLocation() {
+        String location = preferences_.getString(LOCATION_PREFERENCE, "");
+        if (!location.equals("")) {
+            preferences_.edit().remove(LOCATION_PREFERENCE).commit();
+        }
+        return location;
     }
 
     /**
